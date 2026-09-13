@@ -6,6 +6,7 @@
     csvInput: $('#csvInput'), fileDrop: $('#fileDrop'), fileName: $('#fileName'),
     summaryRow: $('#summaryRow'), classCount: $('#classCount'), studentCount: $('#studentCount'),
     warningCount: $('#warningCount'), cacheStatus: $('#cacheStatus'), clearCacheButton: $('#clearCacheButton'),
+    exportExcelButton: $('#exportExcelButton'),
     workspace: $('#workspace'), mobileTabs: $('#mobileTabs'),
     classSelect: $('#classSelect'), studentSearch: $('#studentSearch'), studentList: $('#studentList'),
     progressText: $('#progressText'), progressBar: $('#progressBar'), selectedAvatar: $('#selectedAvatar'),
@@ -43,6 +44,7 @@
 
   const SESSION_KEY = 'ltv-student-photo-session-v2';
   const DRAFT_DB_NAME = 'ltv-student-photo-drafts';
+  const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -682,6 +684,61 @@
     return new Blob([bytes], { type: mime });
   }
 
+  function excelFileName() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `Trang_thai_hoc_sinh_${year}-${month}-${day}.xlsx`;
+  }
+
+  async function exportExcelStatus() {
+    if (!state.dataset || !window.StudentXlsx?.buildWorkbook) {
+      showToast('Chưa có danh sách học sinh để xuất Excel.', true);
+      return;
+    }
+
+    const originalText = elements.exportExcelButton.textContent;
+    elements.exportExcelButton.disabled = true;
+    elements.exportExcelButton.textContent = 'Đang tạo Excel…';
+    persistSessionNow();
+
+    try {
+      const blob = window.StudentXlsx.buildWorkbook({
+        students: state.dataset.students,
+        classNames: state.dataset.classNames,
+        groups: state.dataset.groups,
+        captured: state.captured,
+        absent: state.absent,
+      });
+      const filename = excelFileName();
+      const file = new File([blob], filename, { type: XLSX_MIME, lastModified: Date.now() });
+
+      if (window.AndroidPhotoSaver?.saveDocument) {
+        const saved = window.AndroidPhotoSaver.saveDocument(await blobToDataUrl(file), filename, XLSX_MIME);
+        if (!saved) throw new Error('Android không lưu được file Excel.');
+        showToast(`Đã lưu Downloads/LTV_Hoc_Sinh/${filename}`);
+      } else if (state.directoryHandle) {
+        const fileHandle = await state.directoryHandle.getFileHandle(filename, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(file);
+        await writable.close();
+        showToast(`Đã lưu ${filename}`);
+      } else if (isIOS && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        showToast('Đã tạo file Excel trạng thái.');
+      } else {
+        triggerDownload(file);
+        showToast(`Đã xuất ${filename}`);
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') showToast('Không xuất được file Excel. Vui lòng thử lại.', true);
+    } finally {
+      elements.exportExcelButton.disabled = false;
+      elements.exportExcelButton.textContent = originalText;
+    }
+  }
+
   async function chooseDirectory() {
     try {
       state.directoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
@@ -804,6 +861,7 @@
     if (state.nextStudent) selectStudent(state.nextStudent);
   });
   elements.chooseFolderButton.addEventListener('click', chooseDirectory);
+  elements.exportExcelButton.addEventListener('click', exportExcelStatus);
   elements.clearCacheButton.addEventListener('click', clearCachedSession);
   document.querySelectorAll('.mobile-tab').forEach((button) => button.addEventListener('click', () => setMobileView(button.dataset.view)));
   window.addEventListener('beforeunload', () => {

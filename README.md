@@ -12,6 +12,8 @@ Mã nguồn Android nằm trong thư mục `android/`. App chạy offline, dùng
 
 Cuối màn hình chụp luôn hiển thị tiến độ lớp dạng `đã xử lý/tổng số` và học sinh tiếp theo chưa chụp/chưa đánh dấu vắng.
 
+Nút **Xuất Excel trạng thái** tạo file `.xlsx` của toàn trường, gồm trang danh sách chi tiết và trang tổng hợp từng lớp. Mỗi học sinh được phân loại theo trạng thái hiện tại: **Có mặt**, **Vắng mặt** hoặc **Chưa chụp**. Trên app Android, file được lưu vào `Downloads/LTV_Hoc_Sinh`.
+
 ## Chạy trên máy tính Windows
 
 Nhấp đúp `start_web.bat`. Trình duyệt sẽ tự mở địa chỉ `http://localhost:4173`.

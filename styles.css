@@ -142,6 +142,8 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 .summary-row span { padding: 6px 10px; border-radius: 9px; background: #f6f8f7; color: var(--muted); font-size: 0.8rem; }
 .summary-row strong { color: var(--ink); }
 .summary-row .cache-status { background: var(--green-50); color: var(--green-700); font-weight: 800; }
+.export-button { margin-left: auto; min-height: 32px; border: 1px solid #acd2c3; border-radius: 9px; padding: 0 11px; background: var(--green-50); color: var(--green-800); font-size: .76rem; font-weight: 900; cursor: pointer; }
+.export-button:hover { border-color: var(--green-600); background: #e1f5ed; }
 .clear-cache-button { margin-left: auto; border: 0; background: transparent; color: var(--muted); font-size: 0.78rem; font-weight: 700; cursor: pointer; }
 .clear-cache-button:hover { color: #9b3d36; }
 
@@ -321,6 +323,7 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
   .summary-row { gap: 5px; overflow-x: auto; }
   .summary-row span { flex: 0 0 auto; }
   .clear-cache-button { flex: 0 0 auto; margin-left: 0; }
+  .export-button { flex: 0 0 auto; margin-left: 0; }
   .mobile-tabs { top: max(70px, calc(60px + env(safe-area-inset-top))); }
   .student-panel, .capture-panel { padding: 15px; border-radius: 15px; }
   .capture-heading { margin-bottom: 12px; }

@@ -119,6 +119,88 @@ public final class PhotoSaverBridge {
         }
     }
 
+    @JavascriptInterface
+    public boolean saveDocument(String dataUrl, String requestedFileName, String requestedMimeType) {
+        String fileName = safeDocumentFileName(requestedFileName);
+        String mimeType = requestedMimeType == null || requestedMimeType.isEmpty()
+                ? "application/octet-stream"
+                : requestedMimeType;
+        try {
+            int comma = dataUrl == null ? -1 : dataUrl.indexOf(',');
+            if (comma < 0) throw new IllegalArgumentException("Invalid document data");
+            byte[] bytes = Base64.decode(dataUrl.substring(comma + 1), Base64.DEFAULT);
+            if (bytes.length == 0) throw new IllegalArgumentException("Empty document");
+
+            boolean saved = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                    ? saveDocumentWithMediaStore(bytes, fileName, mimeType)
+                    : saveDocumentLegacy(bytes, fileName, mimeType);
+            if (saved) showToast("Đã lưu Downloads/LTV_Hoc_Sinh/" + fileName);
+            return saved;
+        } catch (Exception error) {
+            showToast("Không lưu được file Excel: " + error.getMessage());
+            return false;
+        }
+    }
+
+    private boolean saveDocumentWithMediaStore(byte[] bytes, String fileName, String mimeType) throws Exception {
+        ContentResolver resolver = context.getContentResolver();
+        Uri collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        String relativePath = Environment.DIRECTORY_DOWNLOADS + "/LTV_Hoc_Sinh/";
+
+        try (Cursor cursor = resolver.query(
+                collection,
+                new String[]{MediaStore.Downloads._ID},
+                MediaStore.Downloads.DISPLAY_NAME + "=? AND " + MediaStore.Downloads.RELATIVE_PATH + "=?",
+                new String[]{fileName, relativePath},
+                null
+        )) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Uri oldDocument = Uri.withAppendedPath(collection, String.valueOf(cursor.getLong(0)));
+                    resolver.delete(oldDocument, null, null);
+                }
+            }
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+        values.put(MediaStore.Downloads.MIME_TYPE, mimeType);
+        values.put(MediaStore.Downloads.RELATIVE_PATH, relativePath);
+        values.put(MediaStore.Downloads.IS_PENDING, 1);
+        Uri documentUri = resolver.insert(collection, values);
+        if (documentUri == null) throw new IllegalStateException("Không tạo được file Excel");
+
+        try {
+            try (OutputStream stream = resolver.openOutputStream(documentUri, "w")) {
+                if (stream == null) throw new IllegalStateException("Không mở được file Excel");
+                stream.write(bytes);
+            }
+            ContentValues ready = new ContentValues();
+            ready.put(MediaStore.Downloads.IS_PENDING, 0);
+            resolver.update(documentUri, ready, null, null);
+            return true;
+        } catch (Exception error) {
+            resolver.delete(documentUri, null, null);
+            throw error;
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean saveDocumentLegacy(byte[] bytes, String fileName, String mimeType) throws Exception {
+        if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            throw new SecurityException("Chưa có quyền lưu bộ nhớ");
+        }
+        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File directory = new File(downloads, "LTV_Hoc_Sinh");
+        if (!directory.exists() && !directory.mkdirs()) throw new IllegalStateException("Không tạo được thư mục lưu");
+        File output = new File(directory, fileName);
+        try (FileOutputStream stream = new FileOutputStream(output, false)) {
+            stream.write(bytes);
+        }
+        MediaScannerConnection.scanFile(context, new String[]{output.getAbsolutePath()}, new String[]{mimeType}, null);
+        return true;
+    }
+
     private boolean saveWithMediaStore(byte[] bytes, String fileName) throws Exception {
         ContentResolver resolver = context.getContentResolver();
         Uri collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -183,6 +265,14 @@ public final class PhotoSaverBridge {
         name = name.replaceAll("[\\\\/:*?\"<>|]", "-");
         if (name.isEmpty()) name = "hoc-sinh.jpg";
         if (!name.toLowerCase(Locale.ROOT).endsWith(".jpg")) name += ".jpg";
+        return name;
+    }
+
+    private String safeDocumentFileName(String requested) {
+        String name = requested == null ? "Trang_thai_hoc_sinh.xlsx" : requested.trim();
+        name = name.replaceAll("[\\\\/:*?\"<>|]", "-");
+        if (name.isEmpty()) name = "Trang_thai_hoc_sinh.xlsx";
+        if (!name.toLowerCase(Locale.ROOT).endsWith(".xlsx")) name += ".xlsx";
         return name;
     }
 

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ltv-student-photo-v5';
-const ASSETS = ['./', './index.html', './styles.css', './csv-utils.js', './app.js', './manifest.webmanifest', './icon.svg'];
+const CACHE_NAME = 'ltv-student-photo-v6';
+const ASSETS = ['./', './index.html', './styles.css', './csv-utils.js', './xlsx-export.js', './app.js', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));

@@ -13,6 +13,7 @@
 - Giữ ảnh nháp chưa lưu trong bộ nhớ riêng của app để tránh mất khi app bị đóng giữa chừng.
 - Đánh dấu/bỏ đánh dấu vắng ngay trong danh sách hoặc màn hình chụp.
 - Hiển thị tiến độ dạng `20/30` và thông tin học sinh tiếp theo ở cuối màn hình chụp.
+- Xuất file Excel trạng thái toàn trường với danh sách chi tiết, tổng hợp theo lớp và ba trạng thái **Có mặt**, **Vắng mặt**, **Chưa chụp**; file được lưu vào `Downloads/LTV_Hoc_Sinh`.
 - Android 8.0 trở lên (`minSdk 26`).
 - Target Android 16 (`targetSdk 36`).
 
