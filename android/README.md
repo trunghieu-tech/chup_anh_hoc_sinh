@@ -8,6 +8,9 @@
 - Camera trực tiếp trong app hoặc camera sau của điện thoại.
 - Lưu JPEG vào `Pictures/LTV_Hoc_Sinh`.
 - Ghi đè ảnh cũ có cùng mã học sinh.
+- Tự khôi phục danh sách CSV, lớp/học sinh đang chọn, tiến độ đã chụp và trạng thái vắng sau khi đóng app.
+- Giữ ảnh nháp chưa lưu trong bộ nhớ riêng của app để tránh mất khi app bị đóng giữa chừng.
+- Đánh dấu/bỏ đánh dấu vắng ngay trong danh sách hoặc màn hình chụp.
 - Android 8.0 trở lên (`minSdk 26`).
 - Target Android 16 (`targetSdk 36`).
 

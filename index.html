@@ -42,6 +42,8 @@
         <span><strong id="classCount">0</strong> lớp</span>
         <span><strong id="studentCount">0</strong> học sinh</span>
         <span><strong id="warningCount">0</strong> cảnh báo</span>
+        <span class="cache-status" id="cacheStatus">Đã lưu tiến độ</span>
+        <button class="clear-cache-button" id="clearCacheButton" type="button">Xóa dữ liệu nhớ</button>
       </div>
     </section>
 
@@ -80,7 +82,10 @@
             <h2 id="selectedName">Chọn một học sinh</h2>
             <span id="selectedMeta">Mã học sinh sẽ hiển thị tại đây</span>
           </div>
-          <span class="save-state" id="saveState" hidden>Đã lưu</span>
+          <div class="student-statuses">
+            <span class="save-state" id="saveState" hidden>Đã lưu ảnh</span>
+            <button class="attendance-button" id="absentButton" type="button" disabled>Đánh dấu vắng</button>
+          </div>
         </div>
 
         <div class="camera-stage" id="cameraStage">
@@ -88,8 +93,8 @@
           <img id="photoPreview" alt="Ảnh học sinh vừa chụp" hidden>
           <div class="camera-placeholder" id="cameraPlaceholder">
             <div class="camera-symbol" aria-hidden="true">◎</div>
-            <h3>Sẵn sàng chụp ảnh</h3>
-            <p>Chọn học sinh, sau đó mở camera hoặc dùng camera của điện thoại.</p>
+            <h3 id="placeholderTitle">Sẵn sàng chụp ảnh</h3>
+            <p id="placeholderText">Chọn học sinh, sau đó mở camera hoặc dùng camera của điện thoại.</p>
           </div>
           <div class="student-code-chip" id="studentCodeChip" hidden></div>
         </div>

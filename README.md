@@ -8,7 +8,7 @@ https://trunghieu-tech.github.io/chup_anh_hoc_sinh/
 
 ## Ứng dụng Android
 
-Mã nguồn Android nằm trong thư mục `android/`. App chạy offline, dùng cùng giao diện với web và lưu ảnh trực tiếp vào `Pictures/LTV_Hoc_Sinh` theo mã học sinh. Mỗi lần cập nhật mã Android, GitHub Actions sẽ tạo APK thử nghiệm để tải về.
+Mã nguồn Android nằm trong thư mục `android/`. App chạy offline, dùng cùng giao diện với web và lưu ảnh trực tiếp vào `Pictures/LTV_Hoc_Sinh` theo mã học sinh. App tự lưu danh sách, tiến độ, học sinh vắng và ảnh nháp chưa lưu để khôi phục khi mở lại. Mỗi lần cập nhật mã Android, GitHub Actions sẽ tạo APK thử nghiệm để tải về.
 
 ## Chạy trên máy tính Windows
 

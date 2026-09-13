@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
@@ -17,14 +18,85 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.Locale;
 
+import org.json.JSONObject;
+
 public final class PhotoSaverBridge {
+    private static final String PREFS_NAME = "student_photo_cache";
+    private static final String SESSION_KEY = "session_json";
+    private static final String DRAFT_STUDENT_KEY = "draft_student_key";
+    private static final String DRAFT_FILE_NAME = "student_photo_draft.jpg";
     private final Context context;
+    private final SharedPreferences preferences;
 
     public PhotoSaverBridge(Context context) {
         this.context = context.getApplicationContext();
+        this.preferences = this.context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
+    @JavascriptInterface
+    public void saveSession(String json) {
+        if (json == null || json.length() > 4_000_000) return;
+        preferences.edit().putString(SESSION_KEY, json).apply();
+    }
+
+    @JavascriptInterface
+    public String loadSession() {
+        return preferences.getString(SESSION_KEY, "");
+    }
+
+    @JavascriptInterface
+    public void clearSession() {
+        preferences.edit().remove(SESSION_KEY).apply();
+    }
+
+    @JavascriptInterface
+    public boolean cacheDraft(String dataUrl, String studentKey) {
+        try {
+            int comma = dataUrl == null ? -1 : dataUrl.indexOf(',');
+            if (comma < 0 || studentKey == null || studentKey.isEmpty()) return false;
+            byte[] bytes = Base64.decode(dataUrl.substring(comma + 1), Base64.DEFAULT);
+            try (FileOutputStream stream = new FileOutputStream(draftFile(), false)) {
+                stream.write(bytes);
+            }
+            preferences.edit().putString(DRAFT_STUDENT_KEY, studentKey).commit();
+            return true;
+        } catch (Exception error) {
+            return false;
+        }
+    }
+
+    @JavascriptInterface
+    public String loadDraft() {
+        File file = draftFile();
+        String studentKey = preferences.getString(DRAFT_STUDENT_KEY, "");
+        if (!file.isFile() || studentKey.isEmpty()) return "";
+        try (FileInputStream stream = new FileInputStream(file)) {
+            byte[] bytes = new byte[(int) file.length()];
+            int offset = 0;
+            while (offset < bytes.length) {
+                int count = stream.read(bytes, offset, bytes.length - offset);
+                if (count < 0) break;
+                offset += count;
+            }
+            if (offset != bytes.length) return "";
+            JSONObject result = new JSONObject();
+            result.put("studentKey", studentKey);
+            result.put("dataUrl", "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP));
+            return result.toString();
+        } catch (Exception error) {
+            return "";
+        }
+    }
+
+    @JavascriptInterface
+    public void clearDraft() {
+        preferences.edit().remove(DRAFT_STUDENT_KEY).apply();
+        File file = draftFile();
+        if (file.exists()) file.delete();
     }
 
     @JavascriptInterface
@@ -112,6 +184,10 @@ public final class PhotoSaverBridge {
         if (name.isEmpty()) name = "hoc-sinh.jpg";
         if (!name.toLowerCase(Locale.ROOT).endsWith(".jpg")) name += ".jpg";
         return name;
+    }
+
+    private File draftFile() {
+        return new File(context.getFilesDir(), DRAFT_FILE_NAME);
     }
 
     private void showToast(String message) {

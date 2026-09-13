@@ -141,6 +141,9 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 .summary-row { grid-column: 1 / -1; display: flex; gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
 .summary-row span { padding: 6px 10px; border-radius: 9px; background: #f6f8f7; color: var(--muted); font-size: 0.8rem; }
 .summary-row strong { color: var(--ink); }
+.summary-row .cache-status { background: var(--green-50); color: var(--green-700); font-weight: 800; }
+.clear-cache-button { margin-left: auto; border: 0; background: transparent; color: var(--muted); font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+.clear-cache-button:hover { color: #9b3d36; }
 
 .workspace { display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(560px, 1.55fr); gap: 20px; align-items: start; }
 .panel { overflow: hidden; }
@@ -188,12 +191,17 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 }
 .student-item:hover { background: #f4f7f5; }
 .student-item.is-active { background: var(--green-50); border-color: #b9ddce; }
+.student-item.is-absent { background: #fff9ed; border-color: #f0d79e; }
+.student-item.is-absent .student-details strong { color: #806020; }
 .student-avatar { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: #e8eeeb; color: #50615b; font-size: 0.75rem; font-weight: 800; }
 .student-item.is-active .student-avatar { background: var(--green-700); color: white; }
 .student-details { min-width: 0; }
 .student-details strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.86rem; }
 .student-details small { display: block; margin-top: 4px; color: var(--muted); font-size: 0.73rem; }
 .captured-check { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--green-100); color: var(--green-700); font-size: 0.8rem; font-weight: 900; }
+.student-actions { display: flex; align-items: center; gap: 5px; }
+.absent-toggle { min-width: 42px; height: 26px; display: inline-grid; place-items: center; border: 1px solid #e4d1a5; border-radius: 8px; padding: 0 7px; background: white; color: #8a6826; font-size: 0.68rem; font-weight: 900; cursor: pointer; }
+.absent-toggle.is-active { border-color: #d79a2c; background: #f7dfad; color: #634500; }
 .empty-list { padding: 32px 10px; color: var(--muted); text-align: center; font-size: 0.86rem; }
 
 .capture-heading { min-height: 58px; display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
@@ -203,6 +211,10 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 .selected-copy h2 { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.18rem; }
 .selected-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 0.78rem; }
 .save-state { margin-left: auto; padding: 7px 10px; border-radius: 999px; background: var(--green-100); color: var(--green-800); font-size: 0.76rem; font-weight: 800; }
+.student-statuses { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 7px; }
+.attendance-button { min-height: 34px; border: 1px solid #e1c887; border-radius: 10px; padding: 0 10px; background: #fff9ed; color: #76581c; font-size: 0.74rem; font-weight: 900; cursor: pointer; }
+.attendance-button.is-absent { border-color: #d39624; background: #f5d994; color: #5e4106; }
+.attendance-button:disabled { opacity: .45; cursor: not-allowed; }
 
 .camera-stage {
   width: 100%;
@@ -288,11 +300,14 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
   .file-drop { min-height: 62px; }
   .summary-row { gap: 5px; overflow-x: auto; }
   .summary-row span { flex: 0 0 auto; }
+  .clear-cache-button { flex: 0 0 auto; margin-left: 0; }
   .mobile-tabs { top: max(70px, calc(60px + env(safe-area-inset-top))); }
   .student-panel, .capture-panel { padding: 15px; border-radius: 15px; }
   .capture-heading { margin-bottom: 12px; }
   .selected-avatar { width: 44px; height: 44px; border-radius: 13px; }
   .selected-copy h2 { font-size: 1rem; }
+  .student-statuses { max-width: 116px; }
+  .student-statuses .save-state { margin-left: 0; }
   .camera-stage { aspect-ratio: 3 / 4; max-height: 58vh; }
   .camera-options { grid-template-columns: 1fr 1fr; }
   .camera-options .control { grid-column: 1 / -1; }
