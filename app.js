@@ -15,7 +15,7 @@
     photoPreview: $('#photoPreview'), cameraPlaceholder: $('#cameraPlaceholder'),
     placeholderTitle: $('#placeholderTitle'), placeholderText: $('#placeholderText'), studentCodeChip: $('#studentCodeChip'),
     cameraSelect: $('#cameraSelect'), openCameraButton: $('#openCameraButton'),
-    nativeCameraLabel: $('#nativeCameraLabel'), nativeCameraInput: $('#nativeCameraInput'),
+    nativeCameraLabel: $('#nativeCameraLabel'), nativeCameraText: $('#nativeCameraText'), nativeCameraInput: $('#nativeCameraInput'),
     captureButton: $('#captureButton'), retakeButton: $('#retakeButton'), saveButton: $('#saveButton'),
     saveNextButton: $('#saveNextButton'), chooseFolderButton: $('#chooseFolderButton'),
     storageTitle: $('#storageTitle'), storageHelp: $('#storageHelp'), iosNote: $('#iosNote'),
@@ -49,6 +49,8 @@
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const isMobile = matchMedia('(max-width: 900px)').matches;
+  const isAndroidApp = Boolean(window.AndroidPhotoSaver?.saveImage);
+  const usesMobileWebCamera = !isAndroidApp && (isMobile || isIOS || matchMedia('(pointer: coarse)').matches);
 
   function initials(name) {
     const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
@@ -243,7 +245,9 @@
       elements.placeholderText.textContent = 'Bỏ đánh dấu vắng nếu học sinh có mặt và cần chụp ảnh.';
     } else {
       elements.placeholderTitle.textContent = 'Sẵn sàng chụp ảnh';
-      elements.placeholderText.textContent = 'Mở camera trực tiếp hoặc dùng camera của điện thoại.';
+      elements.placeholderText.textContent = usesMobileWebCamera
+        ? 'Chọn học sinh để tự động mở camera sau của điện thoại.'
+        : 'Mở camera trực tiếp hoặc dùng camera của điện thoại.';
     }
   }
 
@@ -386,9 +390,9 @@
       });
       actions.append(absentToggle);
       item.append(avatar, details, actions);
-      item.addEventListener('click', () => selectStudent(student));
+      item.addEventListener('click', () => selectStudent(student, false, true));
       item.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') selectStudent(student);
+        if (event.key === 'Enter' || event.key === ' ') selectStudent(student, false, true);
       });
       fragment.append(item);
     }
@@ -396,9 +400,19 @@
     updateProgress();
   }
 
-  function selectStudent(student, force = false) {
+  function openMobileWebCamera() {
+    if (!usesMobileWebCamera || !state.selectedStudent || state.photoBlob
+        || state.captured.has(state.selectedStudent.key) || state.absent.has(state.selectedStudent.key)
+        || elements.nativeCameraInput.disabled) return;
+    stopCamera();
+    elements.nativeCameraInput.value = '';
+    elements.nativeCameraInput.click();
+  }
+
+  function selectStudent(student, force = false, autoOpenCamera = false) {
     if (state.selectedStudent?.key === student.key) {
       if (isMobile) setMobileView('camera');
+      if (autoOpenCamera) openMobileWebCamera();
       return;
     }
     if (!force && state.photoBlob && state.selectedStudent?.key !== student.key) {
@@ -411,6 +425,7 @@
     renderStudentList();
     schedulePersist();
     if (isMobile) setMobileView('camera');
+    if (autoOpenCamera) openMobileWebCamera();
   }
 
   function toggleAbsent(student = state.selectedStudent) {
@@ -791,7 +806,7 @@
     const next = nextPendingStudent(students);
     if (next) {
       clearPhotoPreview();
-      selectStudent(next, true);
+      selectStudent(next, true, true);
       if (state.stream) updateCameraStage();
     } else {
       clearPhotoPreview();
@@ -806,9 +821,14 @@
 
   function configurePlatform() {
     const hasDirectoryPicker = 'showDirectoryPicker' in window;
-    const isAndroidApp = Boolean(window.AndroidPhotoSaver?.saveImage);
     elements.chooseFolderButton.hidden = !hasDirectoryPicker || isAndroidApp;
     elements.iosNote.hidden = !isIOS;
+    if (usesMobileWebCamera) {
+      elements.openCameraButton.hidden = true;
+      elements.cameraSelect.hidden = true;
+      elements.nativeCameraLabel.classList.add('is-auto-camera');
+      elements.nativeCameraText.textContent = 'Mở camera điện thoại';
+    }
     if (isAndroidApp) {
       elements.storageTitle.textContent = 'Thư mục Pictures/LTV_Hoc_Sinh';
       elements.storageHelp.textContent = 'App lưu trực tiếp và đặt tên ảnh theo mã học sinh.';
@@ -858,12 +878,15 @@
   elements.saveNextButton.addEventListener('click', () => savePhoto(true));
   elements.absentButton.addEventListener('click', () => toggleAbsent());
   elements.nextStudentCard.addEventListener('click', () => {
-    if (state.nextStudent) selectStudent(state.nextStudent);
+    if (state.nextStudent) selectStudent(state.nextStudent, false, true);
   });
   elements.chooseFolderButton.addEventListener('click', chooseDirectory);
   elements.exportExcelButton.addEventListener('click', exportExcelStatus);
   elements.clearCacheButton.addEventListener('click', clearCachedSession);
-  document.querySelectorAll('.mobile-tab').forEach((button) => button.addEventListener('click', () => setMobileView(button.dataset.view)));
+  document.querySelectorAll('.mobile-tab').forEach((button) => button.addEventListener('click', () => {
+    setMobileView(button.dataset.view);
+    if (button.dataset.view === 'camera') openMobileWebCamera();
+  }));
   window.addEventListener('beforeunload', () => {
     persistSessionNow();
     stopCamera();

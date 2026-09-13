@@ -237,6 +237,7 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 
 .camera-options { display: grid; grid-template-columns: minmax(160px, 1fr) auto auto; gap: 9px; margin-top: 13px; }
 .camera-options .control[hidden] + .button { grid-column: 2; }
+.native-camera-button.is-auto-camera { grid-column: 1 / -1 !important; background: var(--green-700); border-color: var(--green-700); color: white; box-shadow: 0 5px 14px rgba(23, 107, 87, 0.18); }
 .button {
   min-height: 44px;
   display: inline-flex;
@@ -336,6 +337,7 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
   .camera-options .control { grid-column: 1 / -1; }
   .camera-options .control[hidden] + .button { grid-column: auto; }
   .camera-options .button { padding: 0 9px; font-size: 0.78rem; }
+  .native-camera-button.is-auto-camera { grid-column: 1 / -1; }
   .action-bar { display: grid; grid-template-columns: 1fr 1fr; }
   .action-bar .button { min-width: 0; width: 100%; }
   .action-bar .button:only-child { grid-column: 1 / -1; }

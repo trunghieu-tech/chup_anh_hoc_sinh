@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ltv-student-photo-v6';
+const CACHE_NAME = 'ltv-student-photo-v7';
 const ASSETS = ['./', './index.html', './styles.css', './csv-utils.js', './xlsx-export.js', './app.js', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', (event) => {
