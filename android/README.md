@@ -5,6 +5,7 @@
 ## Tính năng Android
 
 - Chọn CSV từ bộ nhớ thiết bị.
+- Nhận CSV từ Downloads, Google Drive và các trình quản lý tệp dù thiết bị gán MIME là CSV, Excel, text hoặc binary.
 - Camera trực tiếp trong app hoặc camera sau của điện thoại.
 - Lưu JPEG vào `Pictures/LTV_Hoc_Sinh`.
 - Ghi đè ảnh cũ có cùng mã học sinh.

@@ -156,17 +156,22 @@ public final class MainActivity extends Activity {
     private void launchDocumentChooser(WebChromeClient.FileChooserParams params) {
         try {
             cameraCaptureActive = false;
-            startActivityForResult(params.createIntent(), REQUEST_FILE);
-        } catch (Exception firstError) {
-            try {
-                Intent fallback = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                fallback.addCategory(Intent.CATEGORY_OPENABLE);
-                fallback.setType("*/*");
-                startActivityForResult(fallback, REQUEST_FILE);
-            } catch (Exception secondError) {
-                finishFileRequest(null);
-                Toast.makeText(this, "Không mở được trình chọn tệp.", Toast.LENGTH_LONG).show();
-            }
+            Intent picker = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            picker.addCategory(Intent.CATEGORY_OPENABLE);
+            picker.setType("*/*");
+            picker.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+            picker.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                    "text/csv",
+                    "text/comma-separated-values",
+                    "application/csv",
+                    "application/vnd.ms-excel",
+                    "text/plain",
+                    "application/octet-stream"
+            });
+            startActivityForResult(picker, REQUEST_FILE);
+        } catch (Exception error) {
+            finishFileRequest(null);
+            Toast.makeText(this, "Không mở được trình chọn tệp: " + error.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
