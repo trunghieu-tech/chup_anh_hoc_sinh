@@ -18,6 +18,10 @@
     captureButton: $('#captureButton'), retakeButton: $('#retakeButton'), saveButton: $('#saveButton'),
     saveNextButton: $('#saveNextButton'), chooseFolderButton: $('#chooseFolderButton'),
     storageTitle: $('#storageTitle'), storageHelp: $('#storageHelp'), iosNote: $('#iosNote'),
+    captureProgressLabel: $('#captureProgressLabel'), captureProgressCount: $('#captureProgressCount'),
+    captureProgressBar: $('#captureProgressBar'), nextStudentCard: $('#nextStudentCard'),
+    nextStudentAvatar: $('#nextStudentAvatar'), nextStudentName: $('#nextStudentName'),
+    nextStudentMeta: $('#nextStudentMeta'),
     captureCanvas: $('#captureCanvas'), toast: $('#toast'),
   };
 
@@ -25,6 +29,7 @@
     dataset: null,
     datasetFileName: '',
     selectedStudent: null,
+    nextStudent: null,
     captured: new Set(),
     absent: new Set(),
     stream: null,
@@ -279,6 +284,41 @@
     const handled = students.filter((student) => state.captured.has(student.key) || state.absent.has(student.key)).length;
     elements.progressText.textContent = `${captured} đã chụp · ${absent} vắng`;
     elements.progressBar.style.width = students.length ? `${(handled / students.length) * 100}%` : '0%';
+    elements.captureProgressLabel.textContent = elements.classSelect.value ? `Tiến độ lớp ${elements.classSelect.value}` : 'Tiến độ lớp';
+    elements.captureProgressCount.textContent = `${handled}/${students.length}`;
+    elements.captureProgressBar.style.width = students.length ? `${(handled / students.length) * 100}%` : '0%';
+    updateNextStudentPreview(students, handled);
+  }
+
+  function nextPendingStudent(students = currentClassStudents()) {
+    if (!students.length) return null;
+    const needsHandling = (student) => !state.captured.has(student.key) && !state.absent.has(student.key);
+    const currentIndex = state.selectedStudent
+      ? students.findIndex((student) => student.key === state.selectedStudent.key)
+      : -1;
+    if (currentIndex < 0) return students.find(needsHandling) || null;
+    return students.slice(currentIndex + 1).find(needsHandling)
+      || students.slice(0, currentIndex).find(needsHandling)
+      || null;
+  }
+
+  function updateNextStudentPreview(students, handled) {
+    const next = nextPendingStudent(students);
+    state.nextStudent = next;
+    elements.nextStudentCard.disabled = !next;
+    if (next) {
+      elements.nextStudentAvatar.textContent = initials(next.name);
+      elements.nextStudentName.textContent = next.name;
+      elements.nextStudentMeta.textContent = `Mã ${next.code} · Lớp ${next.className}${next.birthDate ? ` · ${next.birthDate}` : ''}`;
+      return;
+    }
+    elements.nextStudentAvatar.textContent = handled === students.length && students.length ? '✓' : 'HS';
+    elements.nextStudentName.textContent = handled === students.length && students.length
+      ? 'Đã xử lý xong lớp'
+      : (state.selectedStudent ? 'Bạn hiện tại là người cuối' : 'Chưa có dữ liệu');
+    elements.nextStudentMeta.textContent = handled === students.length && students.length
+      ? `${handled}/${students.length} học sinh đã được xử lý`
+      : 'Không còn học sinh tiếp theo chưa xử lý';
   }
 
   function renderStudentList() {
@@ -691,9 +731,7 @@
   function selectNextStudent() {
     const students = currentClassStudents();
     if (!students.length || !state.selectedStudent) return;
-    const currentIndex = students.findIndex((item) => item.key === state.selectedStudent.key);
-    const needsHandling = (item) => !state.captured.has(item.key) && !state.absent.has(item.key);
-    const next = students.slice(currentIndex + 1).find(needsHandling) || students.find(needsHandling);
+    const next = nextPendingStudent(students);
     if (next) {
       clearPhotoPreview();
       selectStudent(next, true);
@@ -762,6 +800,9 @@
   elements.saveButton.addEventListener('click', () => savePhoto(false));
   elements.saveNextButton.addEventListener('click', () => savePhoto(true));
   elements.absentButton.addEventListener('click', () => toggleAbsent());
+  elements.nextStudentCard.addEventListener('click', () => {
+    if (state.nextStudent) selectStudent(state.nextStudent);
+  });
   elements.chooseFolderButton.addEventListener('click', chooseDirectory);
   elements.clearCacheButton.addEventListener('click', clearCachedSession);
   document.querySelectorAll('.mobile-tab').forEach((button) => button.addEventListener('click', () => setMobileView(button.dataset.view)));

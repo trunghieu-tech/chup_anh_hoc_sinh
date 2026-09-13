@@ -265,6 +265,26 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 .storage-card p { margin: 4px 0 0; color: var(--muted); font-size: 0.75rem; }
 .ios-note { margin: 12px 2px 0; padding: 11px 13px; border-radius: 11px; background: #fff7e6; color: #6d5523; font-size: 0.78rem; line-height: 1.5; }
 
+.capture-footer { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(280px, 1.2fr); gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.capture-progress-summary, .next-student-card { min-height: 92px; border: 1px solid var(--line); border-radius: 14px; background: #fafcfb; }
+.capture-progress-summary { padding: 13px 14px; }
+.capture-progress-summary > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.capture-progress-summary span { color: var(--muted); font-size: .76rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.capture-progress-summary strong { color: var(--green-800); font-size: 1.08rem; }
+.capture-progress-summary small { display: block; margin-top: 7px; color: var(--muted); font-size: .69rem; line-height: 1.35; }
+.capture-progress-track { height: 6px; margin-top: 9px; overflow: hidden; border-radius: 999px; background: #e7eeeb; }
+.capture-progress-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--green-600); transition: width 220ms ease; }
+.next-student-card { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 11px; padding: 12px 13px; color: var(--ink); text-align: left; cursor: pointer; transition: 150ms ease; }
+.next-student-card:hover:not(:disabled) { border-color: #abd3c3; background: var(--green-50); transform: translateY(-1px); }
+.next-student-card:disabled { cursor: default; opacity: .7; }
+.next-student-avatar { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; background: var(--green-100); color: var(--green-800); font-size: .76rem; font-weight: 900; }
+.next-student-copy { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.next-student-copy small { color: var(--green-700); font-size: .67rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
+.next-student-copy strong, .next-student-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.next-student-copy strong { font-size: .86rem; }
+.next-student-copy span { color: var(--muted); font-size: .72rem; }
+.next-arrow { color: var(--green-600); font-size: 1.8rem; line-height: 1; }
+
 .mobile-tabs { display: none; }
 .toast { position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 100; max-width: calc(100% - 32px); padding: 11px 16px; border-radius: 12px; background: #132d26; color: white; box-shadow: 0 10px 28px rgba(0,0,0,.2); font-size: 0.84rem; font-weight: 700; opacity: 0; transform: translate(-50%, 16px); pointer-events: none; transition: 180ms ease; }
 .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
@@ -318,6 +338,7 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
   .action-bar .button:only-child { grid-column: 1 / -1; }
   .storage-card { align-items: flex-start; flex-direction: column; }
   .storage-card .button { width: 100%; }
+  .capture-footer { grid-template-columns: 1fr; }
 }
 
 @media (display-mode: standalone) {

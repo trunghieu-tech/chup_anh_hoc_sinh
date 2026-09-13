@@ -12,6 +12,7 @@
 - Tự khôi phục danh sách CSV, lớp/học sinh đang chọn, tiến độ đã chụp và trạng thái vắng sau khi đóng app.
 - Giữ ảnh nháp chưa lưu trong bộ nhớ riêng của app để tránh mất khi app bị đóng giữa chừng.
 - Đánh dấu/bỏ đánh dấu vắng ngay trong danh sách hoặc màn hình chụp.
+- Hiển thị tiến độ dạng `20/30` và thông tin học sinh tiếp theo ở cuối màn hình chụp.
 - Android 8.0 trở lên (`minSdk 26`).
 - Target Android 16 (`targetSdk 36`).
 

@@ -10,6 +10,8 @@ https://trunghieu-tech.github.io/chup_anh_hoc_sinh/
 
 Mã nguồn Android nằm trong thư mục `android/`. App chạy offline, dùng cùng giao diện với web và lưu ảnh trực tiếp vào `Pictures/LTV_Hoc_Sinh` theo mã học sinh. App tự lưu danh sách, tiến độ, học sinh vắng và ảnh nháp chưa lưu để khôi phục khi mở lại. Mỗi lần cập nhật mã Android, GitHub Actions sẽ tạo APK thử nghiệm để tải về.
 
+Cuối màn hình chụp luôn hiển thị tiến độ lớp dạng `đã xử lý/tổng số` và học sinh tiếp theo chưa chụp/chưa đánh dấu vắng.
+
 ## Chạy trên máy tính Windows
 
 Nhấp đúp `start_web.bat`. Trình duyệt sẽ tự mở địa chỉ `http://localhost:4173`.

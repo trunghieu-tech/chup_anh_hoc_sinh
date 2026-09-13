@@ -128,6 +128,27 @@
         <p class="ios-note" id="iosNote" hidden>
           Trên iPhone/iPad, chọn <strong>Lưu ảnh</strong> rồi chọn <strong>Lưu vào Tệp</strong> để giữ đúng tên mã học sinh.
         </p>
+
+        <div class="capture-footer">
+          <div class="capture-progress-summary">
+            <div>
+              <span id="captureProgressLabel">Tiến độ lớp</span>
+              <strong id="captureProgressCount">0/0</strong>
+            </div>
+            <div class="capture-progress-track" aria-hidden="true"><span id="captureProgressBar"></span></div>
+            <small>Đã xử lý gồm học sinh đã chụp hoặc đã đánh dấu vắng.</small>
+          </div>
+
+          <button class="next-student-card" id="nextStudentCard" type="button" disabled>
+            <span class="next-student-avatar" id="nextStudentAvatar" aria-hidden="true">HS</span>
+            <span class="next-student-copy">
+              <small>Bạn tiếp theo</small>
+              <strong id="nextStudentName">Chưa có dữ liệu</strong>
+              <span id="nextStudentMeta">Chọn danh sách học sinh để bắt đầu</span>
+            </span>
+            <span class="next-arrow" aria-hidden="true">›</span>
+          </button>
+        </div>
       </section>
     </section>
   </main>
