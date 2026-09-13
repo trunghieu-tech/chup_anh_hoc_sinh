@@ -30,6 +30,8 @@ Giao diện tự chuyển sang chế độ điện thoại. Nút **Camera điệ
 - iPhone/iPad: sau khi chụp, bấm **Chia sẻ / Lưu ảnh**, sau đó chọn **Lưu vào Tệp** để giữ tên `ma_hoc_sinh.jpg`.
 - Android: ảnh được tải xuống hoặc chia sẻ với tên `ma_hoc_sinh.jpg`, tùy trình duyệt.
 - Trên web mobile, khi chạm chọn một học sinh hoặc mở thẻ **Chụp ảnh**, hệ thống tự gọi camera sau gốc của điện thoại. Trình duyệt vẫn có thể yêu cầu người dùng xác nhận mở camera theo quy định bảo mật của Android/iOS.
+- Trên web mobile, nút menu `☰` mở ngăn dữ liệu bên trái, chứa phần nhập CSV, xuất Excel và xóa cache. Ngăn này tự ẩn sau khi nhập dữ liệu để màn hình chụp có nhiều diện tích hơn.
+- Thông tin **Bạn tiếp theo** nằm ngay dưới cụm nút chụp/lưu để dễ theo dõi khi đang chụp liên tục.
 - Camera trực tiếp (`getUserMedia`) trên điện thoại yêu cầu web chạy qua HTTPS. Vì vậy, để dùng đầy đủ trên nhiều điện thoại, hãy đưa thư mục web tĩnh này lên một dịch vụ HTTPS như GitHub Pages hoặc Cloudflare Pages.
 - Nếu điện thoại và máy tính cùng Wi-Fi, địa chỉ mạng nội bộ được in trong cửa sổ chạy web. Ở địa chỉ HTTP này, nút **Camera điện thoại** vẫn là lựa chọn tương thích nhất; camera trực tiếp có thể bị trình duyệt chặn.
 

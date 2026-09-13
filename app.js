@@ -3,6 +3,8 @@
 
   const $ = (selector) => document.querySelector(selector);
   const elements = {
+    importCard: $('#importCard'), menuButton: $('#menuButton'), drawerBackdrop: $('#drawerBackdrop'),
+    drawerCloseButton: $('#drawerCloseButton'),
     csvInput: $('#csvInput'), fileDrop: $('#fileDrop'), fileName: $('#fileName'),
     summaryRow: $('#summaryRow'), classCount: $('#classCount'), studentCount: $('#studentCount'),
     warningCount: $('#warningCount'), cacheStatus: $('#cacheStatus'), clearCacheButton: $('#clearCacheButton'),
@@ -39,6 +41,7 @@
     directoryHandle: null,
     toastTimer: null,
     persistTimer: null,
+    drawerTimer: null,
     draftRevision: 0,
   };
 
@@ -211,6 +214,28 @@
     document.querySelectorAll('.mobile-tab').forEach((button) => {
       button.classList.toggle('is-active', button.dataset.view === view);
     });
+  }
+
+  function openDataDrawer() {
+    if (!usesMobileWebCamera) return;
+    clearTimeout(state.drawerTimer);
+    elements.drawerBackdrop.hidden = false;
+    elements.importCard.setAttribute('aria-hidden', 'false');
+    elements.menuButton.setAttribute('aria-expanded', 'true');
+    document.documentElement.classList.add('data-drawer-open');
+  }
+
+  function closeDataDrawer(immediate = false) {
+    if (!usesMobileWebCamera) return;
+    clearTimeout(state.drawerTimer);
+    document.documentElement.classList.remove('data-drawer-open');
+    elements.importCard.setAttribute('aria-hidden', 'true');
+    elements.menuButton.setAttribute('aria-expanded', 'false');
+    if (immediate) {
+      elements.drawerBackdrop.hidden = true;
+    } else {
+      state.drawerTimer = setTimeout(() => { elements.drawerBackdrop.hidden = true; }, 220);
+    }
   }
 
   function releasePhotoUrl() {
@@ -490,6 +515,7 @@
       if (first) selectStudent(first, true);
       if (isMobile) setMobileView('list');
       persistSessionNow();
+      closeDataDrawer();
       showToast(`Đã nhập ${state.dataset.students.length} học sinh thuộc ${state.dataset.classNames.length} lớp.`);
     } catch (error) {
       elements.fileName.textContent = 'Chọn lại file CSV';
@@ -529,6 +555,7 @@
       showToast('Đã khôi phục danh sách và tiến độ lần trước.');
     }
     elements.cacheStatus.textContent = 'Đã khôi phục tiến độ';
+    closeDataDrawer(true);
   }
 
   async function clearCachedSession() {
@@ -746,6 +773,7 @@
         triggerDownload(file);
         showToast(`Đã xuất ${filename}`);
       }
+      closeDataDrawer();
     } catch (error) {
       if (error.name !== 'AbortError') showToast('Không xuất được file Excel. Vui lòng thử lại.', true);
     } finally {
@@ -824,10 +852,13 @@
     elements.chooseFolderButton.hidden = !hasDirectoryPicker || isAndroidApp;
     elements.iosNote.hidden = !isIOS;
     if (usesMobileWebCamera) {
+      document.documentElement.classList.add('web-mobile-layout');
+      elements.importCard.setAttribute('aria-hidden', 'true');
       elements.openCameraButton.hidden = true;
       elements.cameraSelect.hidden = true;
       elements.nativeCameraLabel.classList.add('is-auto-camera');
       elements.nativeCameraText.textContent = 'Mở camera điện thoại';
+      openDataDrawer();
     }
     if (isAndroidApp) {
       elements.storageTitle.textContent = 'Thư mục Pictures/LTV_Hoc_Sinh';
@@ -883,6 +914,9 @@
   elements.chooseFolderButton.addEventListener('click', chooseDirectory);
   elements.exportExcelButton.addEventListener('click', exportExcelStatus);
   elements.clearCacheButton.addEventListener('click', clearCachedSession);
+  elements.menuButton.addEventListener('click', openDataDrawer);
+  elements.drawerCloseButton.addEventListener('click', () => closeDataDrawer());
+  elements.drawerBackdrop.addEventListener('click', () => closeDataDrawer());
   document.querySelectorAll('.mobile-tab').forEach((button) => button.addEventListener('click', () => {
     setMobileView(button.dataset.view);
     if (button.dataset.view === 'camera') openMobileWebCamera();
@@ -890,6 +924,9 @@
   window.addEventListener('beforeunload', () => {
     persistSessionNow();
     stopCamera();
+  });
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.documentElement.classList.contains('data-drawer-open')) closeDataDrawer();
   });
 
   configurePlatform();

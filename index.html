@@ -13,6 +13,9 @@
 </head>
 <body>
   <header class="app-header">
+    <button class="menu-button" id="menuButton" type="button" aria-controls="importCard" aria-expanded="false" aria-label="Mở menu dữ liệu">
+      <span aria-hidden="true">☰</span>
+    </button>
     <div class="brand-mark" aria-hidden="true">LTV</div>
     <div>
       <p class="eyebrow">TIỂU HỌC LƯƠNG THẾ VINH</p>
@@ -24,8 +27,14 @@
     </div>
   </header>
 
+  <button class="drawer-backdrop" id="drawerBackdrop" type="button" aria-label="Đóng menu dữ liệu" hidden></button>
+
   <main class="page-shell">
-    <section class="import-card" id="importCard">
+    <section class="import-card" id="importCard" aria-label="Menu dữ liệu và thao tác">
+      <div class="drawer-heading">
+        <strong>Dữ liệu học sinh</strong>
+        <button id="drawerCloseButton" type="button" aria-label="Đóng menu dữ liệu">×</button>
+      </div>
       <div class="import-copy">
         <span class="step-number">1</span>
         <div>
@@ -118,6 +127,16 @@
           <button class="button button-success" id="saveNextButton" type="button" hidden>Lưu &amp; học sinh tiếp</button>
         </div>
 
+        <button class="next-student-card capture-next-card" id="nextStudentCard" type="button" disabled>
+          <span class="next-student-avatar" id="nextStudentAvatar" aria-hidden="true">HS</span>
+          <span class="next-student-copy">
+            <small>Bạn tiếp theo</small>
+            <strong id="nextStudentName">Chưa có dữ liệu</strong>
+            <span id="nextStudentMeta">Chọn danh sách học sinh để bắt đầu</span>
+          </span>
+          <span class="next-arrow" aria-hidden="true">›</span>
+        </button>
+
         <div class="storage-card">
           <div>
             <strong id="storageTitle">Cách lưu ảnh</strong>
@@ -139,16 +158,6 @@
             <div class="capture-progress-track" aria-hidden="true"><span id="captureProgressBar"></span></div>
             <small>Đã xử lý gồm học sinh đã chụp hoặc đã đánh dấu vắng.</small>
           </div>
-
-          <button class="next-student-card" id="nextStudentCard" type="button" disabled>
-            <span class="next-student-avatar" id="nextStudentAvatar" aria-hidden="true">HS</span>
-            <span class="next-student-copy">
-              <small>Bạn tiếp theo</small>
-              <strong id="nextStudentName">Chưa có dữ liệu</strong>
-              <span id="nextStudentMeta">Chọn danh sách học sinh để bắt đầu</span>
-            </span>
-            <span class="next-arrow" aria-hidden="true">›</span>
-          </button>
         </div>
       </section>
     </section>

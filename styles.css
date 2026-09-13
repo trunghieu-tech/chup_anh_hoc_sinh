@@ -84,6 +84,24 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 
 .privacy-dot { width: 8px; height: 8px; border-radius: 50%; background: #28a779; box-shadow: 0 0 0 4px #d8f1e7; }
 
+.menu-button, .drawer-heading, .drawer-backdrop { display: none; }
+.menu-button {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--green-50);
+  color: var(--green-800);
+  font-size: 1.3rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.drawer-heading { align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.drawer-heading strong { color: var(--green-800); font-size: .96rem; }
+.drawer-heading button { width: 38px; height: 38px; border: 0; border-radius: 10px; background: #edf4f1; color: var(--ink); font-size: 1.5rem; line-height: 1; cursor: pointer; }
+
 .page-shell { width: min(1392px, calc(100% - 48px)); margin: 28px auto 48px; }
 
 .import-card, .panel {
@@ -268,7 +286,8 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 .storage-card p { margin: 4px 0 0; color: var(--muted); font-size: 0.75rem; }
 .ios-note { margin: 12px 2px 0; padding: 11px 13px; border-radius: 11px; background: #fff7e6; color: #6d5523; font-size: 0.78rem; line-height: 1.5; }
 
-.capture-footer { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(280px, 1.2fr); gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.capture-next-card { width: 100%; margin-top: 12px; }
+.capture-footer { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .capture-progress-summary, .next-student-card { min-height: 92px; border: 1px solid var(--line); border-radius: 14px; background: #fafcfb; }
 .capture-progress-summary { padding: 13px 14px; }
 .capture-progress-summary > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -294,6 +313,54 @@ button, label, select { -webkit-tap-highlight-color: transparent; }
 .toast.is-error { background: #8b302b; }
 
 [hidden] { display: none !important; }
+
+.web-mobile-layout .menu-button { display: grid; }
+.web-mobile-layout .drawer-backdrop {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 105;
+  border: 0;
+  background: rgba(8, 27, 22, .48);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.web-mobile-layout .import-card {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 110;
+  width: min(88vw, 390px);
+  margin: 0;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  overflow-y: auto;
+  border-width: 0 1px 0 0;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 16px 0 46px rgba(5, 31, 24, .2);
+  visibility: hidden;
+  transform: translateX(-105%);
+  transition: transform 210ms ease, visibility 210ms;
+}
+.web-mobile-layout .import-card .drawer-heading { display: flex; }
+.web-mobile-layout .import-card .import-copy { align-items: center; }
+.web-mobile-layout .import-card .import-copy .step-number { display: none; }
+.web-mobile-layout .import-card .summary-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  overflow: visible;
+}
+.web-mobile-layout .import-card .summary-row span { min-width: 0; text-align: center; }
+.web-mobile-layout .import-card .cache-status { grid-column: 1 / -1; }
+.web-mobile-layout .import-card .export-button,
+.web-mobile-layout .import-card .clear-cache-button { grid-column: 1 / -1; width: 100%; min-height: 44px; margin-left: 0; border-radius: 11px; }
+.web-mobile-layout .import-card .clear-cache-button { border: 1px solid #ead5d2; background: #fff8f7; color: #8b3d36; }
+.web-mobile-layout.data-drawer-open { overflow: hidden; }
+.web-mobile-layout.data-drawer-open .drawer-backdrop { opacity: 1; }
+.web-mobile-layout.data-drawer-open .import-card { visibility: visible; transform: translateX(0); }
 
 @media (max-width: 900px) {
   .page-shell { width: min(100% - 28px, 760px); margin-top: 18px; }
