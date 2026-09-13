@@ -17,7 +17,7 @@ public final class CameraFileProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        cameraDirectory = new File(requireContext().getCacheDir(), "camera");
+        cameraDirectory = new File(attachedContext().getCacheDir(), "camera");
         return cameraDirectory.exists() || cameraDirectory.mkdirs();
     }
 
@@ -95,7 +95,7 @@ public final class CameraFileProvider extends ContentProvider {
         return file;
     }
 
-    private android.content.Context requireContext() {
+    private android.content.Context attachedContext() {
         android.content.Context context = getContext();
         if (context == null) throw new IllegalStateException("Provider is not attached");
         return context;
