@@ -44,7 +44,15 @@ jobs:
 
       - name: Build debug APK
         working-directory: android
-        run: gradle --no-daemon :app:assembleDebug
+        run: |
+          set -o pipefail
+          gradle --no-daemon :app:assembleDebug 2>&1 | tee ../android-build.log
+
+      - name: Report build failure
+        if: failure()
+        run: |
+          details=$(tail -n 35 android-build.log | sed -e 's/%/%25/g' -e 's/$/%0A/' | tr -d '\n')
+          echo "::error title=Android build failed::$details"
 
       - name: Prepare APK
         run: cp android/app/build/outputs/apk/debug/app-debug.apk LTV-Chup-Anh-Hoc-Sinh.apk
