@@ -344,6 +344,15 @@
     setTimeout(() => URL.revokeObjectURL(url), 1500);
   }
 
+  function blobToDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Không đọc được dữ liệu ảnh.'));
+      reader.readAsDataURL(blob);
+    });
+  }
+
   async function chooseDirectory() {
     try {
       state.directoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
@@ -362,7 +371,10 @@
     const file = new File([state.photoBlob], filename, { type: 'image/jpeg', lastModified: Date.now() });
 
     try {
-      if (state.directoryHandle) {
+      if (window.AndroidPhotoSaver?.saveImage) {
+        const saved = window.AndroidPhotoSaver.saveImage(await blobToDataUrl(file), filename);
+        if (!saved) throw new Error('Android không lưu được ảnh.');
+      } else if (state.directoryHandle) {
         const fileHandle = await state.directoryHandle.getFileHandle(filename, { create: true });
         const writable = await fileHandle.createWritable();
         await writable.write(file);
@@ -408,9 +420,13 @@
 
   function configurePlatform() {
     const hasDirectoryPicker = 'showDirectoryPicker' in window;
-    elements.chooseFolderButton.hidden = !hasDirectoryPicker;
+    const isAndroidApp = Boolean(window.AndroidPhotoSaver?.saveImage);
+    elements.chooseFolderButton.hidden = !hasDirectoryPicker || isAndroidApp;
     elements.iosNote.hidden = !isIOS;
-    if (isIOS) {
+    if (isAndroidApp) {
+      elements.storageTitle.textContent = 'Thư mục Pictures/LTV_Hoc_Sinh';
+      elements.storageHelp.textContent = 'App lưu trực tiếp và đặt tên ảnh theo mã học sinh.';
+    } else if (isIOS) {
       elements.saveButton.textContent = 'Chia sẻ / Lưu ảnh';
       elements.saveNextButton.textContent = 'Lưu & học sinh tiếp';
       elements.storageTitle.textContent = 'Lưu ảnh trên iPhone/iPad';

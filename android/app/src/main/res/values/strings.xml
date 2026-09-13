@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Ảnh học sinh LTV</string>
+    <string name="camera_permission_denied">Cần cấp quyền camera để chụp ảnh.</string>
+    <string name="storage_permission_denied">Cần cấp quyền lưu ảnh trên Android 8/9.</string>
+</resources>

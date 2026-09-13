@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'vn.edu.luongthevinh.studentphoto'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'vn.edu.luongthevinh.studentphoto'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir "$buildDir/generated/webAssets"
+        }
+    }
+}
+
+tasks.register('syncWebAssets', Copy) {
+    from(rootProject.projectDir.parentFile) {
+        include 'index.html'
+        include 'styles.css'
+        include 'app.js'
+        include 'csv-utils.js'
+        include 'manifest.webmanifest'
+        include 'icon.svg'
+        include 'sw.js'
+    }
+    into "$buildDir/generated/webAssets/www"
+}
+
+tasks.named('preBuild').configure {
+    dependsOn tasks.named('syncWebAssets')
+}

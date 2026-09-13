@@ -6,6 +6,10 @@ Web đọc trực tiếp file CSV gốc, chia học sinh theo lớp và lưu ả
 
 https://trunghieu-tech.github.io/chup_anh_hoc_sinh/
 
+## Ứng dụng Android
+
+Mã nguồn Android nằm trong thư mục `android/`. App chạy offline, dùng cùng giao diện với web và lưu ảnh trực tiếp vào `Pictures/LTV_Hoc_Sinh` theo mã học sinh. Mỗi lần cập nhật mã Android, GitHub Actions sẽ tạo APK thử nghiệm để tải về.
+
 ## Chạy trên máy tính Windows
 
 Nhấp đúp `start_web.bat`. Trình duyệt sẽ tự mở địa chỉ `http://localhost:4173`.
