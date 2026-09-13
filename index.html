@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#176b57">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Chụp ảnh học sinh · Lương Thế Vinh</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-mark" aria-hidden="true">LTV</div>
+    <div>
+      <p class="eyebrow">TIỂU HỌC LƯƠNG THẾ VINH</p>
+      <h1>Chụp ảnh học sinh</h1>
+    </div>
+    <div class="privacy-badge" title="Dữ liệu chỉ được xử lý trên thiết bị">
+      <span class="privacy-dot"></span>
+      Chỉ lưu trên máy
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="import-card" id="importCard">
+      <div class="import-copy">
+        <span class="step-number">1</span>
+        <div>
+          <h2>Nhập danh sách học sinh</h2>
+          <p>Chọn file CSV thô ban đầu. Hệ thống sẽ tự sửa dấu tiếng Việt và chia theo lớp.</p>
+        </div>
+      </div>
+      <label class="file-drop" id="fileDrop">
+        <input id="csvInput" type="file" accept=".csv,text/csv" hidden>
+        <span class="file-icon" aria-hidden="true">CSV</span>
+        <span class="file-label"><strong>Chọn file CSV</strong><small id="fileName">hoặc kéo thả file vào đây</small></span>
+      </label>
+      <div class="summary-row" id="summaryRow" hidden>
+        <span><strong id="classCount">0</strong> lớp</span>
+        <span><strong id="studentCount">0</strong> học sinh</span>
+        <span><strong id="warningCount">0</strong> cảnh báo</span>
+      </div>
+    </section>
+
+    <nav class="mobile-tabs" id="mobileTabs" hidden aria-label="Chuyển màn hình">
+      <button class="mobile-tab is-active" data-view="list">Danh sách</button>
+      <button class="mobile-tab" data-view="camera">Chụp ảnh</button>
+    </nav>
+
+    <section class="workspace" id="workspace" hidden data-mobile-view="list">
+      <aside class="student-panel panel">
+        <div class="panel-heading">
+          <div>
+            <span class="step-number">2</span>
+            <h2>Chọn học sinh</h2>
+          </div>
+          <span class="progress-text" id="progressText">0/0 đã chụp</span>
+        </div>
+
+        <label class="field-label" for="classSelect">Lớp</label>
+        <select id="classSelect" class="control"></select>
+
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="studentSearch" type="search" placeholder="Tìm tên hoặc mã học sinh" autocomplete="off">
+        </label>
+
+        <div class="class-progress" aria-hidden="true"><span id="progressBar"></span></div>
+        <div class="student-list" id="studentList" role="listbox" aria-label="Danh sách học sinh"></div>
+      </aside>
+
+      <section class="capture-panel panel">
+        <div class="capture-heading">
+          <div class="selected-avatar" id="selectedAvatar" aria-hidden="true">HS</div>
+          <div class="selected-copy">
+            <p id="selectedClass">Chưa chọn lớp</p>
+            <h2 id="selectedName">Chọn một học sinh</h2>
+            <span id="selectedMeta">Mã học sinh sẽ hiển thị tại đây</span>
+          </div>
+          <span class="save-state" id="saveState" hidden>Đã lưu</span>
+        </div>
+
+        <div class="camera-stage" id="cameraStage">
+          <video id="cameraVideo" playsinline muted hidden></video>
+          <img id="photoPreview" alt="Ảnh học sinh vừa chụp" hidden>
+          <div class="camera-placeholder" id="cameraPlaceholder">
+            <div class="camera-symbol" aria-hidden="true">◎</div>
+            <h3>Sẵn sàng chụp ảnh</h3>
+            <p>Chọn học sinh, sau đó mở camera hoặc dùng camera của điện thoại.</p>
+          </div>
+          <div class="student-code-chip" id="studentCodeChip" hidden></div>
+        </div>
+
+        <div class="camera-options">
+          <select id="cameraSelect" class="control" aria-label="Chọn camera" hidden></select>
+          <button class="button button-secondary" id="openCameraButton" type="button" disabled>
+            Mở camera trực tiếp
+          </button>
+          <label class="button button-secondary native-camera-button is-primary-mobile" id="nativeCameraLabel" aria-disabled="true">
+            Camera điện thoại
+            <input id="nativeCameraInput" type="file" accept="image/*" capture="environment" hidden disabled>
+          </label>
+        </div>
+
+        <div class="action-bar">
+          <button class="button button-primary" id="captureButton" type="button" disabled>Chụp ảnh</button>
+          <button class="button button-secondary" id="retakeButton" type="button" hidden>Chụp lại</button>
+          <button class="button button-primary" id="saveButton" type="button" hidden>Lưu ảnh</button>
+          <button class="button button-success" id="saveNextButton" type="button" hidden>Lưu &amp; học sinh tiếp</button>
+        </div>
+
+        <div class="storage-card">
+          <div>
+            <strong id="storageTitle">Cách lưu ảnh</strong>
+            <p id="storageHelp">Ảnh được đặt tên tự động theo mã học sinh.</p>
+          </div>
+          <button class="button button-quiet" id="chooseFolderButton" type="button" hidden>Chọn thư mục lưu</button>
+        </div>
+
+        <p class="ios-note" id="iosNote" hidden>
+          Trên iPhone/iPad, chọn <strong>Lưu ảnh</strong> rồi chọn <strong>Lưu vào Tệp</strong> để giữ đúng tên mã học sinh.
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <canvas id="captureCanvas" hidden></canvas>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="csv-utils.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
